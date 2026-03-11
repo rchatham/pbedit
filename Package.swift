@@ -33,5 +33,9 @@ let package = Package(
                 .linkedFramework("Carbon"),
             ]
         ),
+        .testTarget(
+            name: "PBEditCoreTests",
+            dependencies: ["PBEditCore"]
+        ),
     ]
 )

@@ -1,0 +1,143 @@
+.TH PBEDIT 1 "March 2026" "pbedit 1.0" "User Commands"
+.SH NAME
+pbedit \- macOS clipboard manipulation utility
+.SH SYNOPSIS
+.B pbedit
+[\fIcommand\fR] [\fIoptions\fR]
+.SH DESCRIPTION
+.B pbedit
+is a command-line tool for reading, writing, and transforming macOS clipboard contents.
+It provides quick access to clipboard operations that would otherwise require multiple steps in GUI applications.
+.PP
+When invoked without arguments,
+.B pbedit
+defaults to the
+.B get
+command, printing the current clipboard contents to stdout.
+.SH COMMANDS
+.TP
+.B get
+Print clipboard contents to stdout. This is the default command.
+.TP
+.B set \fI[text...]\fR
+Set clipboard contents. If text arguments are provided, they are joined with spaces.
+If no arguments are given, reads from stdin (useful for piping).
+.TP
+.B edit
+Open clipboard contents in the editor specified by the
+.B $EDITOR
+environment variable. After editing, the modified content is saved back to the clipboard.
+.TP
+.B trim
+Remove leading and trailing whitespace and newlines from clipboard contents.
+.TP
+.B upper
+Convert all clipboard text to uppercase.
+.TP
+.B lower
+Convert all clipboard text to lowercase.
+.TP
+.B replace \fIpattern\fR \fIreplacement\fR
+Perform regex find/replace on clipboard contents.
+.I pattern
+is a regular expression, and
+.I replacement
+may include capture group references ($1, $2, etc.).
+.TP
+.B app
+Launch the PBEdit menu bar application.
+.SH EXAMPLES
+.PP
+Print clipboard contents:
+.RS
+.nf
+pbedit
+pbedit get
+.fi
+.RE
+.PP
+Copy text to clipboard:
+.RS
+.nf
+pbedit set "Hello, World!"
+echo "piped content" | pbedit set
+.fi
+.RE
+.PP
+Edit clipboard in vim:
+.RS
+.nf
+export EDITOR=vim
+pbedit edit
+.fi
+.RE
+.PP
+Transform clipboard text:
+.RS
+.nf
+pbedit trim
+pbedit upper
+pbedit lower
+.fi
+.RE
+.PP
+Find and replace with regex:
+.RS
+.nf
+pbedit replace "\\bfoo\\b" "bar"
+pbedit replace "(\\w+)@(\\w+)" "$1 at $2"
+.fi
+.RE
+.PP
+Pipeline example (copy file contents, transform, use):
+.RS
+.nf
+cat file.txt | pbedit set
+pbedit trim
+pbedit upper
+pbedit get > output.txt
+.fi
+.RE
+.SH ENVIRONMENT
+.TP
+.B EDITOR
+Used by the
+.B edit
+command to determine which editor to launch. Common values include
+.IR vim ", " nvim ", " nano ", and " code .
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Error occurred (invalid arguments, missing EDITOR, regex error, etc.).
+.SH MENU BAR APP
+The
+.B pbedit app
+command launches a companion menu bar application that provides:
+.IP \(bu 2
+Quick clipboard preview in the menu bar
+.IP \(bu 2
+Global hotkey (Cmd+Shift+E) to open a floating editor panel
+.IP \(bu 2
+One-click text transformations (trim, uppercase, lowercase)
+.PP
+The app can be installed to ~/Applications using:
+.RS
+make install-app
+.RE
+.SH FILES
+.TP
+.I ~/Applications/PBEdit.app
+Menu bar application bundle.
+.TP
+.I /usr/local/bin/pbedit
+CLI executable (after make install-cli).
+.SH SEE ALSO
+.BR pbcopy (1),
+.BR pbpaste (1)
+.SH BUGS
+Report bugs at: https://github.com/rchatham/pbedit/issues
+.SH AUTHOR
+Reid Chatham

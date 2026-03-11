@@ -1,4 +1,4 @@
-.PHONY: build build-app install-cli install-app install clean
+.PHONY: build build-app install-cli install-app install-man install clean test
 
 BUILD_DIR := $(shell swift build -c release --show-bin-path 2>/dev/null || echo .build/release)
 APP_BUNDLE := build/PBEdit.app
@@ -26,7 +26,15 @@ install-app: build-app
 	codesign --force --deep --sign - ~/Applications/PBEdit.app
 	@echo "Installed PBEdit.app to ~/Applications/"
 
+install-man:
+	@mkdir -p /usr/local/share/man/man1
+	sudo cp man/pbedit.1 /usr/local/share/man/man1/pbedit.1
+	@echo "Installed man page to /usr/local/share/man/man1/pbedit.1"
+
 install: install-cli install-app
+
+test:
+	swift test
 
 clean:
 	swift package clean
